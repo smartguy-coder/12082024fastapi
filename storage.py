@@ -29,30 +29,31 @@ class BaseStorage(ABC):
 
 class JSONStorage(BaseStorage):
     def __init__(self):
-        self.file_name = 'storage.json'
+        self.__file_name = 'storage.json'
 
-        my_file = Path(self.file_name)
+        my_file = Path(self.__file_name)
         if not my_file.is_file():
-            with open(self.file_name, mode='w', encoding='utf-8') as file:
+            with open(self.__file_name, mode='w', encoding='utf-8') as file:
                 json.dump([], file, indent=4)
 
     def create_book(self, book: dict):
-        with open(self.file_name, mode='r') as file:
+        with open(self.__file_name, mode='r') as file:
             content: list[dict] = json.load(file)
 
         book['id'] = uuid4().hex
         content.append(book)
-        with open(self.file_name, mode='w', encoding='utf-8') as file:
+        with open(self.__file_name, mode='w', encoding='utf-8') as file:
             json.dump(content, file, indent=4)
+        return book
 
     def get_books(self, skip: int = 0, limit: int = 10, search_param: str = ''):
-        with open(self.file_name, mode='r') as file:
+        with open(self.__file_name, mode='r') as file:
             content: list[dict] = json.load(file)
 
         if search_param:
             data = []
             for book in content:
-                if search_param in book['author']:
+                if search_param in book['author'] or search_param in book['title'] or search_param in book['description']:
                     data.append(book)
             sliced = data[skip:][:limit]
             return sliced
@@ -61,7 +62,7 @@ class JSONStorage(BaseStorage):
         return sliced
 
     def get_book_info(self, book_id: str):
-        with open(self.file_name, mode='r') as file:
+        with open(self.__file_name, mode='r') as file:
             content: list[dict] = json.load(file)
         for book in content:
             if book_id == book['id']:
@@ -69,32 +70,26 @@ class JSONStorage(BaseStorage):
         return {}
 
     def update_book(self, book_id: str, author: str):
-        with open(self.file_name, mode='r') as file:
+        with open(self.__file_name, mode='r') as file:
             content: list[dict] = json.load(file)
-        was_found = False
         for book in content:
             if book_id == book['id']:
                 book['author'] = author
-                was_found = True
-                break
-        if was_found:
-            with open(self.file_name, mode='w', encoding='utf-8') as file:
-                json.dump(content, file, indent=4)
+                with open(self.__file_name, mode='w', encoding='utf-8') as file:
+                    json.dump(content, file, indent=4)
+                return book
         raise ValueError()
 
     def delete_book(self, book_id: str):
-        with open(self.file_name, mode='r') as file:
+        with open(self.__file_name, mode='r') as file:
             content: list[dict] = json.load(file)
-        was_found = False
         for book in content:
             if book_id == book['id']:
                 content.remove(book)
-                was_found = True
                 break
-        if was_found:
-            with open(self.file_name, mode='w', encoding='utf-8') as file:
-                json.dump(content, file, indent=4)
-        raise ValueError()
+
+        with open(self.__file_name, mode='w', encoding='utf-8') as file:
+            json.dump(content, file, indent=4)
 
 
 storage = JSONStorage()
