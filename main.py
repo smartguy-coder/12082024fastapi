@@ -2,8 +2,9 @@ import json
 from enum import Enum
 from typing import Annotated
 
-from fastapi import FastAPI, Query, status, Depends, HTTPException
+from fastapi import FastAPI, Query, status, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
 
 from storage import storage
@@ -15,6 +16,31 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl='api/token')
 app = FastAPI(
     description='First site'
 )
+
+templates = Jinja2Templates(directory='templates')
+
+
+@app.get('/')
+def index(request: Request):
+    context = {
+        'request': request,
+        'title': 'My title',
+        'books': storage.get_books()
+    }
+    return templates.TemplateResponse('index.html', context=context)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class Genres(str, Enum):
@@ -36,9 +62,7 @@ class SavedBook(NewBook):
     id: str = Field(examples=['40de287d36ab48d8a88572b8e98e7312'])
 
 
-@app.get('/')
-def index():
-    return {'status': 200}
+
 
 
 fake_db_users = [

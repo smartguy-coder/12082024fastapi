@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }}</title>
+</head>
+
+
+<body>
+
+
+
+{% for book in books %}
+<h1>{{ book.title }}</h1>
+<h3>by {{ book.author }}</h3>
+
+<img src="{{ book.cover }}">
+
+<p>
+    {{ book.description }}
+
+</p>
+
+{% endfor %}
+
+
+</body>
+
+
+</html>
