@@ -51,9 +51,14 @@ class JSONStorage(BaseStorage):
             content: list[dict] = json.load(file)
 
         if search_param:
+            search_param = search_param.lower()
             data = []
             for book in content:
-                if search_param in book['author'] or search_param in book['title'] or search_param in book['description']:
+                if (
+                        search_param in book['author'].lower()
+                        or search_param in book['title'].lower()
+                        or search_param in book['description'].lower()
+                ):
                     data.append(book)
             sliced = data[skip:][:limit]
             return sliced
@@ -61,7 +66,7 @@ class JSONStorage(BaseStorage):
         sliced = content[skip:][:limit]
         return sliced
 
-    def get_book_info(self, book_id: str):
+    def get_book_info(self, book_id: str) -> dict:
         with open(self.__file_name, mode='r') as file:
             content: list[dict] = json.load(file)
         for book in content:

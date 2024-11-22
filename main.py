@@ -2,7 +2,7 @@ import json
 from enum import Enum
 from typing import Annotated
 
-from fastapi import FastAPI, Query, status, Depends, HTTPException, Request
+from fastapi import FastAPI, Query, status, Depends, HTTPException, Request, Form
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field
@@ -21,17 +21,38 @@ templates = Jinja2Templates(directory='templates')
 
 
 @app.get('/')
-def index(request: Request):
+@app.post('/')
+def index(request: Request, skip: int = 0, limit: int = 50, search: str = Form(default='')):
+    if search:
+        title = f"Результати пошуку по запиту '{search}'"
+    else:
+        title = 'Головна сторінка книжкового клубу'
+
     context = {
         'request': request,
-        'title': 'Main page',
-        'books': storage.get_books()
+        'search_info': '' if not search else title,
+        'title': title,
+        'books': storage.get_books(skip=skip, limit=limit, search_param=search)
     }
     return templates.TemplateResponse('index.html', context=context)
 
 
+@app.get('/books/{book_id}')
+def web_book_details(request: Request, book_id: str):
+    saved_book = storage.get_book_info(book_id)
+    context = {
+        'request': request,
+        'book': saved_book,
+    }
+    return templates.TemplateResponse('book_details.html', context=context)
 
 
+@app.get('/location')
+def location(request: Request):
+    context = {
+        'request': request,
+    }
+    return templates.TemplateResponse('location.html', context=context)
 
 
 
