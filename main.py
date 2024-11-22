@@ -24,7 +24,7 @@ templates = Jinja2Templates(directory='templates')
 def index(request: Request):
     context = {
         'request': request,
-        'title': 'My title',
+        'title': 'Main page',
         'books': storage.get_books()
     }
     return templates.TemplateResponse('index.html', context=context)
