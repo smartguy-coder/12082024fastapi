@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+
+{% if visited_books %}
+
+  {% for visited_book in visited_books %}
+        <a href="{{ url_for('web_book_details', book_id=visited_book.id) }}" class="btn btn-warning">Книга {{visited_book.title}}</a>
+
+  {% endfor %}
+
+
+{% endif %}
+
+
+
+<h2>{{ search_info }}</h2>
+
+<div class="container-fluid">
+  <div class="d-flex flex-wrap gap-3">
+    {% for book in books %}
+    <div class="card" style="width: 18rem;">
+      <img src="{{ book.cover }}" class="card-img-top" alt="...">
+      <div class="card-body">
+        <h5 class="card-title">{{ book.title }}</h5>
+        <h6 class="card-title">{{ book.author }}</h6>
+        <p class="card-text">{{ book.description|truncate(65,false) }}</p>
+        <a href="{{ url_for('web_book_details', book_id=book.id) }}" class="btn btn-primary">Детальніше</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% endblock %}
