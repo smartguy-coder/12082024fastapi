@@ -1,6 +1,9 @@
 
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
   <div class="container-fluid">
+    <img src="{{ url_for('static', path='example.png') }}" height="25">
+    
+    
     <a class="navbar-brand" href="#">Navbar</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -13,6 +16,18 @@
         <li class="nav-item">
           <a class="nav-link" href="{{ url_for('location') }}">Схема проїзду</a>
         </li>
+
+
+        {% if user %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('logout') }}">Шановний {{user.username}}, можете розлогінитися</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('login') }}">Залогуватися</a>
+        </li>
+        {% endif %}
+
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Dropdown

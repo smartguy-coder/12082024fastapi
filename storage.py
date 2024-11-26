@@ -74,6 +74,15 @@ class JSONStorage(BaseStorage):
                 return book
         return {}
 
+    def get_books_info(self, book_ids: set[str]) -> list:
+        books = []
+        with open(self.__file_name, mode='r') as file:
+            content: list[dict] = json.load(file)
+        for book in content:
+            if book['id'] in book_ids:
+                books.append(book)
+        return books
+
     def update_book(self, book_id: str, author: str):
         with open(self.__file_name, mode='r') as file:
             content: list[dict] = json.load(file)
